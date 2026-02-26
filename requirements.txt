@@ -1,6 +1,4 @@
 streamlit
 pandas
-plotly
-pmdarima
-statsmodels
 numpy
+matplotlib
