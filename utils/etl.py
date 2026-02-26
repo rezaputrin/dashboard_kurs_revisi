@@ -7,11 +7,8 @@ def load_and_prepare(kurs_path, m2_path, rate_path):
 
     kurs["date"] = pd.to_datetime(kurs["date"])
     kurs = kurs.sort_values("date")
-
-    # mid-rate harian
     kurs["mid_rate"] = (kurs["buy"] + kurs["sell"]) / 2
 
-    # jadi bulanan
     kurs_bulanan = (
         kurs.set_index("date")["mid_rate"]
         .resample("MS").mean()
@@ -20,9 +17,13 @@ def load_and_prepare(kurs_path, m2_path, rate_path):
         .rename(columns={"date": "month"})
     )
 
-    # pastikan kolom bulan di m2 & rate sesuai (kalau beda nama, sesuaikan)
-    m2["month"] = pd.to_datetime(m2["month"])
-    rate["month"] = pd.to_datetime(rate["month"])
+    # ✅ FIX: kolom tanggal kamu namanya "date", bukan "month"
+    m2["month"] = pd.to_datetime(m2["date"])
+    rate["month"] = pd.to_datetime(rate["date"])
+
+    # opsional: buang kolom date lama biar rapi
+    m2 = m2.drop(columns=["date"])
+    rate = rate.drop(columns=["date"])
 
     df = (
         kurs_bulanan
